@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {HashRouter as Router, Route, NavLink, Switch, Redirect} from 'react-router-dom';
+import { HashRouter as Router, Route, NavLink, Switch, Redirect } from 'react-router-dom';
 import IconDemo from './examples/Icon.demo';
 import InputExample from './examples/Input.example';
 import ButtonExample from './examples/Button.example';
@@ -11,6 +11,7 @@ import ScrollExample from './examples/Scroll.example';
 import PagerExample from './examples/Pager.example';
 import TableExample from './examples/Table.example';
 import BlankExample from './examples/ClickOutSide.example';
+import SlidesExample from './examples/Slides.example';
 import Content from './lib/Layout/Content';
 import Aside from './lib/Layout/Aside';
 import Header from './lib/Layout/Header';
@@ -23,7 +24,7 @@ ReactDOM.render((
   <Router>
     <Layout className="site-page">
       <Header className="site-header">UI</Header>
-      <Layout style={{marginBottom: '40px'}}>
+      <Layout style={{ marginBottom: '40px' }}>
         <Aside className="site-aside">
           <h2>组件</h2>
           <ul>
@@ -57,21 +58,25 @@ ReactDOM.render((
             <li>
               <NavLink to="/blank">ClickOutSide</NavLink>
             </li>
+            <li>
+              <NavLink to="/slides">Slides</NavLink>
+            </li>
           </ul>
         </Aside>
         <Content className="site-main">
           <Switch>
-            <Route path="/icon" component={IconDemo}></Route>
-            <Route path="/button" component={ButtonExample}></Route>
-            <Route path="/dialog" component={DialogExample}></Route>
-            <Route path="/layout" component={LayoutExample}></Route>
-            <Route path="/form" component={FormExample}></Route>
-            <Route path="/input" component={InputExample}></Route>
-            <Route path='/scroll' component={ScrollExample}></Route>
-            <Route path='/pager' component={PagerExample}></Route>
-            <Route path='/blank' component={BlankExample}></Route>
-            <Route path='/table' component={TableExample}></Route>
-            <Redirect to="/icon"></Redirect>
+            <Route path="/icon" component={IconDemo}/>
+            <Route path="/button" component={ButtonExample}/>
+            <Route path="/dialog" component={DialogExample}/>
+            <Route path="/layout" component={LayoutExample}/>
+            <Route path="/form" component={FormExample}/>
+            <Route path="/input" component={InputExample}/>
+            <Route path='/scroll' component={ScrollExample}/>
+            <Route path='/pager' component={PagerExample}/>
+            <Route path='/blank' component={BlankExample}/>
+            <Route path='/table' component={TableExample}/>
+            <Route path="/slides" component={SlidesExample}/>
+            <Redirect to="/icon"/>
           </Switch>
         </Content>
       </Layout>

@@ -1,0 +1,16 @@
+@import '../lib/main';
+
+.SlidesExample {
+  .slides-demo {
+    width: 360px;
+    border: 1px solid $blue;
+    margin: 20px 0;
+  }
+  .card {
+    height: 180px;
+    background: $red;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
