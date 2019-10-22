@@ -51,7 +51,6 @@ class Slides extends React.Component<IProps, IState> {
 
   componentDidMount(): void {
     const width = this.refSlides.current!.offsetWidth;
-    console.log(width);
     this.refSlidesInner.current!.addEventListener('transitionend', this.afterChange.bind(this));
     const { autoplay, children } = this.props;
     if (autoplay) {
