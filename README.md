@@ -1,3 +1,6 @@
 ## React && TypeScript
 
-努力开发中()...
+### 启动
+```
+yarn start 
+```
