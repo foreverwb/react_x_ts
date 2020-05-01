@@ -1,0 +1,33 @@
+@import "../_main";
+
+.ui-tree {
+  &-item {
+    outline: 1px solid;
+    line-height: 1.5;
+  }
+  &-text {
+    display: block;
+    &:hover {
+      background: lightblue;
+    }
+  }
+  &-level-1 {
+    padding-left: 0;
+  }
+  &-level-2 {
+    padding-left: 1em;
+  }
+  &-level-3 {
+    padding-left: 1em;
+  }
+  &-level-4 {
+    padding-left: 1em;
+  }
+  &-level-5 {
+    padding-left: 1em;
+  }
+  &-collapsed {
+    height: 0;
+    overflow: hidden;
+  }
+}

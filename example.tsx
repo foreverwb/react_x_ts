@@ -17,6 +17,7 @@ import Aside from './lib/Layout/Aside';
 import Header from './lib/Layout/Header';
 import Layout from './lib/Layout/Layout';
 import Footer from './lib/Layout/Footer';
+import TreeExample from "./examples/Tree.example";
 
 import './example.scss';
 
@@ -61,6 +62,9 @@ ReactDOM.render((
             <li>
               <NavLink to="/slides">Slides</NavLink>
             </li>
+            <li>
+              <NavLink to="/tree">Tree</NavLink>
+            </li>
           </ul>
         </Aside>
         <Content className="site-main">
@@ -76,6 +80,7 @@ ReactDOM.render((
             <Route path='/blank' component={BlankExample}/>
             <Route path='/table' component={TableExample}/>
             <Route path="/slides" component={SlidesExample}/>
+            <Route path="/tree" component={TreeExample}/>
             <Redirect to="/icon"/>
           </Switch>
         </Content>
