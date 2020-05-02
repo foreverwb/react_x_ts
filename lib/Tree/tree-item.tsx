@@ -1,4 +1,5 @@
 import React, {ChangeEventHandler, useState} from "react";
+import useUpdate from "../hooks/useUpdate";
 import {scopedClassMaker} from "../untils/classes";
 import './tree.scss';
 
@@ -13,6 +14,7 @@ interface IProps {
 const TreeItem: React.FC<IProps> = (props) => {
   const {item, level, treeProps} = props;
   const [expanded, setExpanded] = useState(true);
+  
   const classes = {
     ['level-' + level]: true,
     'item': true
@@ -20,6 +22,11 @@ const TreeItem: React.FC<IProps> = (props) => {
   const checked = treeProps.multiple ?
     treeProps.selected.indexOf(item.value) >= 0 :
     treeProps.selected === item.value;
+  
+  
+  useUpdate(expanded, () => {
+    console.log('expanded value: ' + expanded)
+  });
   
   const onChange:ChangeEventHandler<{checked: boolean}> = (e) => {
     // const checked = (e.target as HTMLInputElement).checked;
