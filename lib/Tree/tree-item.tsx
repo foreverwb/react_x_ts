@@ -1,4 +1,4 @@
-import React, {ChangeEventHandler, useState} from "react";
+import React, {ChangeEventHandler, useRef, useState} from "react";
 import useUpdate from "../hooks/useUpdate";
 import {scopedClassMaker} from "../untils/classes";
 import './tree.scss';
@@ -23,9 +23,36 @@ const TreeItem: React.FC<IProps> = (props) => {
     treeProps.selected.indexOf(item.value) >= 0 :
     treeProps.selected === item.value;
   
+  const divRef = useRef<HTMLDivElement>(null)
   
   useUpdate(expanded, () => {
-    console.log('expanded value: ' + expanded)
+    if(!divRef.current) return;
+    if(expanded) {
+      divRef.current.style.height = 'auto';
+      const { height } = divRef.current.getBoundingClientRect()
+      divRef.current.style.height = '0px';
+      divRef.current.getBoundingClientRect();
+      divRef.current.style.height = height + 'px';
+      const afterExpand = () => {
+        if(!divRef.current) return;
+        divRef.current.style.height = '';
+        divRef.current.classList.add('ui-tree-children-present');
+        divRef.current.removeEventListener('transitioned', afterExpand)
+      }
+      divRef.current.addEventListener('transitioned', afterExpand)
+    } else {
+      const { height } = divRef.current.getBoundingClientRect()
+      divRef.current.style.height = height + 'px';
+      divRef.current.getBoundingClientRect();
+      divRef.current.style.height = '0px';
+      const afterCollapse = () => {
+        if(!divRef.current) return;
+        divRef.current.style.height = '';
+        divRef.current.classList.add('ui-tree-children-gone');
+        divRef.current.removeEventListener('transitioned', afterCollapse)
+      }
+      divRef.current.addEventListener('transitioned', afterCollapse)
+    }
   });
   
   const onChange:ChangeEventHandler<{checked: boolean}> = (e) => {
@@ -66,7 +93,7 @@ const TreeItem: React.FC<IProps> = (props) => {
             </span>
         }
       </div>
-      <div className={sc({children: true, collapsed: !expanded})}>
+      <div className={sc({children: true, collapsed: !expanded})} ref={divRef}>
         {item.children?.map(sub =>
           <TreeItem key={sub.value} item={sub} level={level + 1} treeProps={treeProps}/>)}
       </div>

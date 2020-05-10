@@ -2,7 +2,7 @@
 
 .ui-tree {
   &-item {
-    outline: 1px solid;
+    border: 1px solid;
     line-height: 1.5;
   }
   &-text {
@@ -10,6 +10,10 @@
     &:hover {
       background: lightblue;
     }
+  }
+  &-children {
+    overflow: hidden;
+    transition: height 1s;
   }
   &-level-1 {
     padding-left: 0;
@@ -25,9 +29,5 @@
   }
   &-level-5 {
     padding-left: 1em;
-  }
-  &-collapsed {
-    height: 0;
-    overflow: hidden;
   }
 }
