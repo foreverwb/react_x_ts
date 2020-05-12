@@ -11,6 +11,8 @@ interface IProps {
   treeProps: TreeProps
 }
 
+interface RecursiveArray<T> extends Array<T | RecursiveArray<T>> {}
+
 const TreeItem: React.FC<IProps> = (props) => {
   const {item, level, treeProps} = props;
   const [expanded, setExpanded] = useState(true);
@@ -55,13 +57,36 @@ const TreeItem: React.FC<IProps> = (props) => {
     }
   });
   
+  function collectChildValues(item: SourceDataItem): string[] {
+    return flatten(item.children?.map(i => [i.value, collectChildValues(i)]));
+  }
+  
+  function flatten(array?: RecursiveArray<string>): string[] {
+    if (!array) {return []}
+    return array.reduce<string[]>((result, current) => {
+      return result.concat(typeof current === 'string' ? current : flatten(current))
+    }, [])
+    
+    // const result = []
+    // for(let i = 0; i < array.length; i++) {
+    //   if (array[i] instanceof Array) {
+    //     result.push(...flatten(array[i] as RecursiveArray<string>))
+    //   } else {
+    //     result.push(array[i] as string)
+    //   }
+    // }
+    // return result;
+  }
+  
   const onChange:ChangeEventHandler<{checked: boolean}> = (e) => {
+    const childValues = collectChildValues(item);
+    console.log(childValues)
     // const checked = (e.target as HTMLInputElement).checked;
     if (treeProps.multiple) {
       if (e.target.checked) {
-        treeProps.onChange([...treeProps.selected, item.value])
+        treeProps.onChange([...treeProps.selected, item.value, ...childValues])
       } else {
-        treeProps.onChange(treeProps.selected.filter(val => val !== item.value))
+        treeProps.onChange(treeProps.selected.filter(val => val !== item.value && childValues.indexOf(val) === -1))
       }
     } else {
       if (e.target.checked) {
