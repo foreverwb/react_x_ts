@@ -1,7 +1,8 @@
-import React, {ChangeEventHandler, useRef, useState} from "react";
+import React, {ChangeEventHandler, useRef} from "react";
 import useUpdate from "../hooks/useUpdate";
 import {scopedClassMaker} from "../untils/classes";
 import './tree.scss';
+import useToggle from "../hooks/useToggle";
 
 const sc = scopedClassMaker('ui-tree');
 
@@ -16,17 +17,19 @@ interface RecursiveArray<T> extends Array<T | RecursiveArray<T>> {}
 
 const TreeItem: React.FC<IProps> = (props) => {
   const {item, level, treeProps} = props;
-  const [expanded, setExpanded] = useState(true);
   
-  const classes = {
-    ['level-' + level]: true,
-    'item': true
-  };
   const checked = treeProps.multiple ?
     treeProps.selected.indexOf(item.value) >= 0 :
     treeProps.selected === item.value;
   
   const divRef = useRef<HTMLDivElement>(null)
+  
+  const classes = {
+    ['level-' + level]: true,
+    'item': true
+  };
+  
+  const {expanded, expand, collapse} = useToggle(true);
   
   useUpdate(expanded, () => {
     if(!divRef.current) return;
@@ -58,26 +61,7 @@ const TreeItem: React.FC<IProps> = (props) => {
     }
   });
   
-  function collectChildValues(item: SourceDataItem): string[] {
-    return flatten(item.children?.map(i => [i.value, collectChildValues(i)]));
-  }
-  
-  function flatten(array?: RecursiveArray<string>): string[] {
-    if (!array) {return []}
-    return array.reduce<string[]>((result, current) => {
-      return result.concat(typeof current === 'string' ? current : flatten(current))
-    }, [])
-    
-    // const result = []
-    // for(let i = 0; i < array.length; i++) {
-    //   if (array[i] instanceof Array) {
-    //     result.push(...flatten(array[i] as RecursiveArray<string>))
-    //   } else {
-    //     result.push(array[i] as string)
-    //   }
-    // }
-    // return result;
-  }
+ 
   
   const onChange:ChangeEventHandler<{checked: boolean}> = (e) => {
     const childValues = collectChildValues(item);
@@ -96,23 +80,6 @@ const TreeItem: React.FC<IProps> = (props) => {
       }
     }
   };
-  const collapse = () => {
-    setExpanded(false)
-  }
-  const expand = () => {
-    setExpanded(true)
-  }
-  
-  function intersect<T>(arr1: T[], arr2: T[]): T[] {
-    const result: T[] = [];
-    for (let i = 0; i < arr1.length; i++) {
-      if (arr2.indexOf((arr1[i])) >= 0) {
-        result.push(arr1[i])
-      }
-    }
-    return result;
-  }
-  
   const onItemChange = (values: string[]) => {
     // children have choice
     const childValues = collectChildValues(item);
@@ -159,6 +126,36 @@ const TreeItem: React.FC<IProps> = (props) => {
       </div>
     </div>
   )
+}
+
+function collectChildValues(item: SourceDataItem): string[] {
+  return flatten(item.children?.map(i => [i.value, collectChildValues(i)]));
+}
+
+function flatten(array?: RecursiveArray<string>): string[] {
+  if (!array) {return []}
+  return array.reduce<string[]>((result, current) => {
+    return result.concat(typeof current === 'string' ? current : flatten(current))
+  }, [])
+  
+  // const result = []
+  // for(let i = 0; i < array.length; i++) {
+  //   if (array[i] instanceof Array) {
+  //     result.push(...flatten(array[i] as RecursiveArray<string>))
+  //   } else {
+  //     result.push(array[i] as string)
+  //   }
+  // }
+  // return result;
+}
+function intersect<T>(arr1: T[], arr2: T[]): T[] {
+  const result: T[] = [];
+  for (let i = 0; i < arr1.length; i++) {
+    if (arr2.indexOf((arr1[i])) >= 0) {
+      result.push(arr1[i])
+    }
+  }
+  return result;
 }
 
 export default TreeItem;
