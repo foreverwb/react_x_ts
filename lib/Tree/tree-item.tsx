@@ -9,6 +9,7 @@ interface IProps {
   item: SourceDataItem
   level: number
   treeProps: TreeProps
+  onItemChange: (values: string[]) => void
 }
 
 interface RecursiveArray<T> extends Array<T | RecursiveArray<T>> {}
@@ -80,13 +81,12 @@ const TreeItem: React.FC<IProps> = (props) => {
   
   const onChange:ChangeEventHandler<{checked: boolean}> = (e) => {
     const childValues = collectChildValues(item);
-    console.log(childValues)
     // const checked = (e.target as HTMLInputElement).checked;
     if (treeProps.multiple) {
       if (e.target.checked) {
-        treeProps.onChange([...treeProps.selected, item.value, ...childValues])
+        props.onItemChange([...treeProps.selected, item.value, ...childValues])
       } else {
-        treeProps.onChange(treeProps.selected.filter(val => val !== item.value && childValues.indexOf(val) === -1))
+        props.onItemChange(treeProps.selected.filter(val => val !== item.value && childValues.indexOf(val) === -1))
       }
     } else {
       if (e.target.checked) {
@@ -103,6 +103,34 @@ const TreeItem: React.FC<IProps> = (props) => {
     setExpanded(true)
   }
   
+  function intersect<T>(arr1: T[], arr2: T[]): T[] {
+    const result: T[] = [];
+    for (let i = 0; i < arr1.length; i++) {
+      if (arr2.indexOf((arr1[i])) >= 0) {
+        result.push(arr1[i])
+      }
+    }
+    return result;
+  }
+  
+  const onItemChange = (values: string[]) => {
+    // children have choice
+    const childValues = collectChildValues(item);
+    const common = intersect(values, childValues);
+    if (common.length !== 0) {
+      props.onItemChange(Array.from(new Set(values.concat(item.value))))
+      // all choice
+      if (common.length === childValues.length) {
+        inputRef.current!.indeterminate = false;
+      } else {
+        inputRef.current!.indeterminate = true;
+      }
+    } else {
+      props.onItemChange(values.filter(v => v !== item.value));
+      inputRef.current!.indeterminate = true;
+    }
+  }
+  const inputRef = useRef<HTMLInputElement>(null)
   return (
     <div key={item.value} className={sc(classes)}>
       <div className={sc('text')}>
@@ -110,6 +138,7 @@ const TreeItem: React.FC<IProps> = (props) => {
           type="checkbox"
           checked={checked}
           onChange={onChange}
+          ref={inputRef}
         />
         {item.text}
         {item.children &&
@@ -120,7 +149,13 @@ const TreeItem: React.FC<IProps> = (props) => {
       </div>
       <div className={sc({children: true, collapsed: !expanded})} ref={divRef}>
         {item.children?.map(sub =>
-          <TreeItem key={sub.value} item={sub} level={level + 1} treeProps={treeProps}/>)}
+          <TreeItem
+            key={sub.value}
+            item={sub}
+            level={level + 1}
+            treeProps={treeProps}
+            onItemChange={onItemChange}
+          />)}
       </div>
     </div>
   )
